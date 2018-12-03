@@ -1,0 +1,175 @@
+<html>
+    <head>
+      <link href='https://fonts.googleapis.com/css?family=Ubuntu:bold' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+      <style>
+            /* Some boilerplating */
+        * { box-sizing: border-box; }
+        body { font-size: 62.5%; background: #00aca0; }
+
+        /* My dropdown */
+        .my-dropdown {
+        cursor: pointer;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -70px);
+        min-width: 350px;
+        height: 40px;
+        }
+
+        /* Selected */
+        .selected {           
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 100%;
+        height: 40px;
+        padding: 0 20px;
+        background: #054641;
+        border-radius: 10px;
+        font: 1.25rem/40px 'Ubuntu', Helvetica, Arial, sans-serif;
+        text-shadow: 2px 2px 0px #000;
+        color: #fff;  
+        }
+
+        /* Arrow */
+        .selected:after {
+        opacity: 0.5;
+        display: inline-block;
+        margin-left: 10px;
+        content: '▼';
+        }
+
+        /* Hover state */
+        .selected:hover:after {
+        opacity: 1;
+        }
+
+        /* Options wrapper (toggled by isOpen) */
+        .options {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        z-index: 1;
+        width: 100%;
+        margin-top: 3px;
+        background: #fff;
+        border-radius: 10px;
+        }
+
+        /* Option */
+        .option {
+        padding: 5px 20px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+        font: 1.2rem 'Vollkorn', Georgia, Times, serif;
+        }
+
+        /* Hover state */
+        .option:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Reset last child for a nice layout */
+        .option:last-child {
+        border-bottom: none;
+        }
+
+        /* Transition */
+        .fade-enter-active, .fade-leave-active {
+        transition: all .25s ease-out;
+        }
+
+        .fade-enter, .fade-leave-active {
+        opacity: 0;
+            transform: translateY(-30px);
+        }
+      </style>
+     
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
+    </head>
+
+
+
+    <body>    
+     <!-- App container -->
+    <div id="app">
+        <!-- This is where my-dropdown will be rendered. -->
+        <my-dropdown></my-dropdown>
+    </div>
+    <!-- Vue template for my-dropdown component. -->
+    <template id="dropdown">
+        <div class="my-dropdown">
+        <div class="selected" @click="toggle">{{ selected }}</div>
+        <transition name="fade">
+        <div class="options" v-show="isOpen">
+            <div class="option" v-for="option in options" @click="set(option)">
+            {{ option }}
+            </div>
+        </div>
+        </transition>
+        </div>
+    </template>
+
+
+    <script>
+
+    // Register my-dropdown component
+    var myDropdown = Vue.component('my-dropdown', {
+    // Define the template, refers to the template id in the HTML.
+    template: '#dropdown',// A data object containing all data for this component.
+    data: function() {
+        return {
+          // Whether the options are visible or not.
+          isOpen: false,
+          // The selected value.
+          selected: 'Select your favourite beer',
+          // Options.
+          options: [
+            'Heineken',
+            'Amstel',
+            'Dommelsch',
+            'Leffe'
+          ]
+        }
+      },
+    // Methods, we will bind these later on.
+    methods: {
+        toggle: function() {
+        this.isOpen = !this.isOpen;
+        },
+        show: function() {
+        this.isOpen = true;
+        },
+        hide: function() {
+        this.isOpen = false;
+        },
+        set: function(option) {
+            this.selected = option;
+            this.hide();
+        }
+    },
+    // This function is called when the DOM is ready.
+    mounted: function() {
+        console.log('My dropdown component is mounted!')
+    }
+    });
+
+
+    // Create new Vue instance
+    var app = new Vue({
+    // Tell Vue #app is the container element.
+    el: '#app'
+    });
+
+    // Empecher highlight de texte
+    document.addEventListener('mousedown', function (event) {
+         if (event.detail > 1) {
+               event.preventDefault();
+         }
+    }, false);
+    
+    </script>
+    </body>
+  </html>
